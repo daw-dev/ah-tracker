@@ -9,6 +9,7 @@ export interface Opportunity {
 
 export interface Auction {
   uuid: string;
+  tier: string;
   start: number;
   end: number;
   item_name: string;
@@ -70,6 +71,7 @@ function getAuctionGroups(allAuctions: Auction[]) {
   const modifiedAuctions = allAuctions
     .filter((auction) => !auction.claimed)
     .filter((auction) => auction.bin)
+    .filter((auction) => auction.end > new Date().getTime())
     .filter((auction) => !["misc", "blocks"].includes(auction.category));
 
   const auctionMap = new Map<String, Opportunity>();
@@ -111,9 +113,9 @@ function getAuctionGroups(allAuctions: Auction[]) {
     .sort((a, b) => b.probableAbsoluteProfit! - a.probableAbsoluteProfit!);
 }
 
-let minAbsoluteProfit = 300_000;
-let minPercentageProfit = 30;
-let maxAuctionCost = 1_000_000;
+let minAbsoluteProfit = 100_000;
+let minPercentageProfit = 10;
+let maxAuctionCost = 10_000_000;
 
 function calculateOpportunity(opportunity: Opportunity) {
   const checkCount = 5;
